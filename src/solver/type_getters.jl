@@ -990,15 +990,15 @@ function get_simulation(config::AtmosConfig)
     output_dir = sim_info.output_dir
     @info "Simulation info" job_id output_dir
 
+    output_toml_file = joinpath(output_dir, "$(job_id)_parameters.toml")
     CP.log_parameter_information(
         config.toml_dict,
-        joinpath(output_dir, "$(job_id)_parameters.toml"),
+        output_toml_file,
         strict = config.parsed_args["strict_params"],
     )
 
-    # Output YAML should reference the output TOML file (using absolute path)
     output_args = copy(config.parsed_args)
-    output_args["toml"] = [abspath(joinpath(output_dir, "$(job_id)_parameters.toml"))]
+    output_args["toml"] = [abspath(output_toml_file)]
     YAML.write_file(joinpath(output_dir, "$job_id.yml"), output_args)
 
     if sim_info.restart
